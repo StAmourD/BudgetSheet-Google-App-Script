@@ -1,59 +1,8 @@
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
-  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var dateToday = new Date();
-  var thisMonth = dateToday.getMonth();
-  var nextMonth = thisMonth + 1;
-  var nextMonthYear = new Date(dateToday);
-  nextMonthYear.setMonth(nextMonth);
-  
-  ui.createMenu('Budget Tools')
+  ui.createMenu('Import')
       .addItem('Import MS Money Data', 'showSidebar')
-      .addItem('Create Copy for Next Month: ' + months[nextMonth % 12] + ' ' + nextMonthYear.getFullYear(), 'copyToNextMonth')
-      .addItem('Create Copy for This Month: ' + months[thisMonth % 12] + ' ' + dateToday.getFullYear(), 'copyToThisMonth')
       .addToUi();
-}
-
-function copyToNextMonth() {
-  var ui = SpreadsheetApp.getUi(); 
-  var nextMonth = new Date().getMonth() + 1;
-  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var result = ui.alert(
-     'Please confirm',
-     'Create a new sheet for ' + months[nextMonth % 12],
-     ui.ButtonSet.YES_NO);
-     
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getActiveSheet();
-  var newSheet;
-  var nextMonthYear = new Date();
-  nextMonthYear.setMonth(nextMonth);
-  var myRanges;
-  
-  if (result == ui.Button.YES) {
-      try {
-        ss.setActiveSheet(ss.getSheetByName(((nextMonth % 12) + 1) + '.' + nextMonthYear.getFullYear()));
-        ss.toast('Sheet already exists.');
-      }
-      catch (e) {
-        // sheet doesnt already exist OK to copy
-        newSheet = sheet.copyTo(ss);
-        newSheet.setName(((nextMonth % 12) + 1) + '.' + nextMonthYear.getFullYear())
-        ss.setActiveSheet(newSheet);
-        ss.moveActiveSheet(sheet.getIndex());
-        sheet.setTabColor('BROWN');
-        newSheet.setTabColor('ORANGE');
-        myRanges = ss.getNamedRanges();
-//        myRanges['7.2017\'!IncomeActuals'].getRange().clearContent();
-        Logger.log(myRanges[1]);
-      }
-  }
-}
-
-
-function copyToThisMonth() {
-  var ui = SpreadsheetApp.getUi(); 
-  var result = ui.alert('Not implemented!');
 }
 
 function showSidebar() {
