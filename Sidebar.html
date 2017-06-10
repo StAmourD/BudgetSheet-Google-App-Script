@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+  </head>
+  <body>
+    <h1>Paste data here:</h1>
+    <textarea style="width: 100%;" id="toImport" rows="25"></textarea>
+    <button class="blue" id="importDataBtn">Import</button>
+    <button class="" id="ClearBtn">Clear</button>
+    <textarea style="width: 100%;" id="errorRows" rows="10"></textarea>
+    <br>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      $(function() {
+        $('#importDataBtn').click(runImportData);
+        $('#ClearBtn').click(function () {
+          $('#toImport').val('');
+          $('#errorRows').val('');
+        });
+      });
+      
+      function runImportData() {
+        var MyData;
+        
+        $('#errorRows').val('');
+        MyData = $('#toImport').val().split('\n');
+        MyData.forEach(function(item, index, array) {
+          array[index] = array[index].split(',');
+        });
+        google.script.run.withSuccessHandler(onReturn)
+          .importData(MyData);
+      }
+      
+      function onReturn(MyData) {
+        var errPrint = 'These categories didn\'t find a match in this sheet:\r\n';
+        var nonImportTotal = 0;
+        MyData.forEach(function(item, index, array) {
+          errPrint = errPrint + '\r\n' + item[0] +': ' + item[1];
+          nonImportTotal = Number(nonImportTotal) + Number(item[1]);
+        });
+        $('#errorRows').val(errPrint + '\r\n\r\nNot imported total: $' + nonImportTotal.toFixed(2));
+      }      
+    </script>
+  </body>
+</html>
+
+
