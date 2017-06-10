@@ -1,9 +1,70 @@
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
-  ui.createMenu('Import')
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var dateToday = new Date();
+  var thisMonth = dateToday.getMonth();
+  var nextMonth = thisMonth + 1;
+  var nextMonthYear = new Date(dateToday);
+  nextMonthYear.setMonth(nextMonth);
+  
+  ui.createMenu('Budget Tools')
       .addItem('Import MS Money Data', 'showSidebar')
+      .addItem('Create Copy: ' + months[nextMonth % 12] + ' ' + nextMonthYear.getFullYear(), 'copyToNextMonth')
+      .addItem('Create Copy: ' + months[thisMonth % 12] + ' ' + dateToday.getFullYear(), 'copyToThisMonth')
       .addToUi();
 }
+
+function copyToNextMonth(){
+  copyMonth(1);
+}
+
+function copyToThisMonth() {
+  copyMonth(0);
+}
+
+function copyMonth(MonthsToAdd) {
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];   
+  var nextMonth = new Date().getMonth() + MonthsToAdd;
+  var ui = SpreadsheetApp.getUi(); 
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getActiveSheet();
+  var newSheet;
+  var nextMonthYear = new Date(); nextMonthYear.setMonth(nextMonth);
+  var ThisRange;
+  var y = nextMonthYear.getFullYear(), m = nextMonthYear.getMonth();
+  var StartDate = new Date(y, m, 1);
+  var EndDate = new Date(y, m + 1, 0);
+  
+  var result = ui.alert(
+     'Please confirm',
+     'Create a new sheet ' + months[nextMonth % 12] + '.' + nextMonthYear.getFullYear(),
+     ui.ButtonSet.YES_NO);  
+  if (result == ui.Button.YES) {
+      try {
+        ss.setActiveSheet(ss.getSheetByName(months[nextMonth % 12] + '.' + nextMonthYear.getFullYear()));
+        ss.toast('Sheet already exists.');
+      }
+      catch (e) {
+        // sheet doesnt already exist OK to copy
+        newSheet = sheet.copyTo(ss);
+        newSheet.setName(months[nextMonth % 12] + '.' + nextMonthYear.getFullYear())
+        ss.setActiveSheet(newSheet);
+        ss.moveActiveSheet(sheet.getIndex());
+        sheet.setTabColor('BROWN');
+        newSheet.setTabColor('ORANGE');
+        // clear old actuals
+        ThisRange = newSheet.getRange("IncomeActuals");
+        ThisRange.clearContent();
+        ThisRange = newSheet.getRange("ExpenseActuals");
+        ThisRange.clearContent();
+        // set date range
+        ThisRange = newSheet.getRange("DateRange");
+        ThisRange.clearContent();
+        ThisRange.setValue(StartDate.toDateString() + ' - ' + EndDate.toDateString());
+      }
+  }
+}
+
 
 function showSidebar() {
   var html = HtmlService.createHtmlOutputFromFile('Sidebar')
