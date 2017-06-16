@@ -25,7 +25,12 @@
         var MyData;
         
         $('#errorRows').val('');
-        MyData = $('#toImport').val().split('\n');
+        MyData = $('#toImport').val();
+        if (MyData.indexOf('\t') > 0) {
+          MyData = MyData.split(',').join('');
+          MyData = MyData.split('\t').join(',');
+        }
+        MyData = MyData.split('\n');
         MyData.forEach(function(item, index, array) {
           array[index] = array[index].split(',');
         });
