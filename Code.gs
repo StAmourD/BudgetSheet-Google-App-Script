@@ -54,9 +54,9 @@ function copyMonth(MonthsToAdd) {
         newSheet.setTabColor('ORANGE');
         // clear old actuals
         ThisRange = newSheet.getRange("IncomeActuals");
-        ThisRange.clearContent();
+        ThisRange.setValue('0');
         ThisRange = newSheet.getRange("ExpenseActuals");
-        ThisRange.clearContent();
+        ThisRange.setValue('0');
         // set date range
         ThisRange = newSheet.getRange("DateRange");
         ThisRange.clearContent();
