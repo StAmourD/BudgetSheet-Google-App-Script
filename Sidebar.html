@@ -9,22 +9,58 @@
     <textarea style="width: 100%;" id="toImport" rows="25"></textarea>
     <button class="blue" id="importDataBtn">Import</button>
     <button class="" id="ClearBtn">Clear</button>
-    <textarea style="width: 100%;" id="errorRows" rows="10"></textarea>
-    <br>
+    <button class="" id="testBtn">Test</button>
+    <div id="nextSteps"></div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
       $(function() {
         $('#importDataBtn').click(runImportData);
         $('#ClearBtn').click(function () {
           $('#toImport').val('');
-          $('#errorRows').val('');
+          $('#nextSteps').html('');
         });
+        $('#testBtn').click(function () {displayErrors();});
       });
+      
+      function displayErrors(retData) {
+          if (retData === undefined) {
+            retData = 'item1,10:item2,220'.split(':'); //{'item1', 10},{'item2', 220};
+            retData.forEach(function(item, index, array) {
+              array[index] = array[index].split(',');
+            });
+          }
+          if (retData.length == 0) {
+            $('#nextSteps').append('<h3>Complete!</h3>');
+            return;
+          }
+          var nonImportTotal = 0;
+          var i = 0;
+          $('#nextSteps').append('<h3>No match for these:</h3>');
+          retData.forEach(function(item, index, array) {
+            nonImportTotal = Number(nonImportTotal) + Number(item[1]);
+            let thisRowNumber = i;
+            let btnID = 'btn-' + i;
+            let lblID = 'lbl-' + i;
+            let $newLbl = $('<label />')
+              .attr({id: lblID, for: btnID, class: 'error'})
+              .text('New expense "' + item[0] + '" for $' + Number(item[1]).toFixed(2) + '?');
+            let $newBtn = $('<button />')
+              .attr({id: btnID, style: 'margin: 5px;margin-bottom: 2px'})
+              .text('Add')
+              .click(function () {testClick(thisRowNumber)});
+            let $newDiv = $('<div />')
+              .attr({id: 'row-' + i});
+            $newDiv.append($newBtn, $newLbl);
+            $('#nextSteps').append($newDiv);
+            i++;
+          });
+          $('#nextSteps').append('<h4>Not imported total: $' + nonImportTotal.toFixed(2) + '</h4>');
+      }
       
       function runImportData() {
         var MyData;
         
-        $('#errorRows').val('');
+        $('#nextSteps').html('');
         MyData = $('#toImport').val();
         if (MyData.indexOf('\t') > 0) {
           MyData = MyData.split(',').join('');
@@ -39,14 +75,12 @@
       }
       
       function onReturn(MyData) {
-        var errPrint = 'These categories didn\'t find a match in this sheet:\r\n';
-        var nonImportTotal = 0;
-        MyData.forEach(function(item, index, array) {
-          errPrint = errPrint + '\r\n' + item[0] +': ' + item[1];
-          nonImportTotal = Number(nonImportTotal) + Number(item[1]);
-        });
-        $('#errorRows').val(errPrint + '\r\n\r\nNot imported total: $' + nonImportTotal.toFixed(2));
-      }      
+        displayErrors(MyData);
+      }
+      
+      function testClick(param) {
+        $('#nextSteps').append('<p>clicked ' + param + '</p>');
+      }
     </script>
   </body>
 </html>
