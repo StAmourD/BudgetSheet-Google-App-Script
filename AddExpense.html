@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>
+      label{
+        display: inline-block;
+        float: left;
+        clear: left;
+        width: 100px;
+        text-align: right;
+      }
+      input {
+        display: inline-block;
+        width: 60%;
+        float: left;
+      }
+      #addBtn {
+        margin-right: 15px;
+        float: right;
+      }
+    </style>
+  </head>
+  <body>
+    <label for="catName">Category name: </label>
+    <input id="catName"/>
+    <br><br>
+    <label for="catAmount">Amount: </label>
+    <input id="catAmount"/>
+    <br><br>
+    <button id="addBtn" class="red" onclick="addRow()">Add</button>
+    <button id="cancelBtn" onclick="closeModal()">Cancel</button>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      function addRow() {
+        var catName = $('#catName').val();
+        var catAmount = $('#catAmount').val();
+        google.script.run.InsertNewExpense(catName, catAmount);
+        google.script.host.close();
+      }
+      
+      function closeModal() {
+        google.script.host.close();
+      }
+    </script>
+  </body>
+</html>
+
+

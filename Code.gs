@@ -30,6 +30,14 @@ function showSidebar() {
       .showSidebar(html);
 }
 
+function addExpenseRow() {
+  var html = HtmlService.createHtmlOutputFromFile('AddExpense')
+    .setWidth(300)
+    .setHeight(120);
+  SpreadsheetApp.getUi()
+    .showModalDialog(html, 'Add New Expense');
+}
+
 function InsertNewExpense(catName, amount, toReturn) {
   catName = catName || 'testName1';
   amount = Number(amount) || 12;
