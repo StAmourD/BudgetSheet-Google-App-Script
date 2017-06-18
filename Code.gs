@@ -65,7 +65,6 @@ function copyMonth(MonthsToAdd) {
   }
 }
 
-
 function showSidebar() {
   var html = HtmlService.createHtmlOutputFromFile('Sidebar')
       .setTitle('Import MS Money Data')
@@ -117,4 +116,30 @@ function importData(ThisData) {
     }
   });
   return RetData;
+}
+
+function sortExpenses() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getActiveSheet();
+  var expenseRange = sheet.getRange('expenseAllColumns');
+  
+  expenseRange.sort(1);
+}
+
+function InsertNewExpense(catName, amount) {
+  catName = catName || 'testName1';
+  amount = Number(amount) || 12;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getActiveSheet();
+  var columnCount = sheet.getRange('expenseAllColumns').getWidth() + 1;
+  var rangeToCopy = sheet.getRange(10, 1, 1, columnCount);
+  var rangeDestination = sheet.getRange(11, 1, 1, columnCount);
+  
+  sheet.insertRowAfter(10);
+  rangeToCopy.copyTo(rangeDestination);
+  sheet.getRange(11, 1).setValue(catName);
+  sheet.getRange(11, 2).setValue(amount);
+  sheet.getRange(11, 3).setValue(0);
+  sortExpenses()
+  return;
 }
