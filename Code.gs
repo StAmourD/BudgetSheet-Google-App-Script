@@ -126,20 +126,21 @@ function sortExpenses() {
   expenseRange.sort(1);
 }
 
-function InsertNewExpense(catName, amount) {
+function InsertNewExpense(catName, amount, toReturn) {
   catName = catName || 'testName1';
   amount = Number(amount) || 12;
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getActiveSheet();
   var columnCount = sheet.getRange('expenseAllColumns').getWidth() + 1;
-  var rangeToCopy = sheet.getRange(10, 1, 1, columnCount);
-  var rangeDestination = sheet.getRange(11, 1, 1, columnCount);
+  var firstRow = sheet.getRange('expenseAllColumns').getRow();
+  var rangeToCopy = sheet.getRange(firstRow, 1, 1, columnCount);
+  var rangeDestination = sheet.getRange(firstRow + 1, 1, 1, columnCount);
   
-  sheet.insertRowAfter(10);
+  sheet.insertRowAfter(firstRow);
   rangeToCopy.copyTo(rangeDestination);
-  sheet.getRange(11, 1).setValue(catName);
-  sheet.getRange(11, 2).setValue(amount);
-  sheet.getRange(11, 3).setValue(0);
+  sheet.getRange(firstRow + 1, 1).setValue(catName);
+  sheet.getRange(firstRow + 1, 2).setValue(amount);
+  sheet.getRange(firstRow + 1, 3).setValue(0);
   sortExpenses()
-  return;
+  return toReturn;
 }
