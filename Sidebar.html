@@ -26,7 +26,7 @@
       }
       
       .overlay {
-          background: #e9e9e9;
+          background: #b4b4b4;
           display: none;
           position: absolute;
           top: 0;
@@ -52,6 +52,7 @@
         $('#importDataBtn').click(runImportData);
         $('#ClearBtn').click(function () {
           $('#toImport').val('');
+          $('#toImport').attr({rows: '25'});
           $('#nextSteps').html('');
         });
         $('#testBtn').click(function () {displayErrors();});
@@ -65,7 +66,7 @@
             });
           }
           if (retData.length == 0) {
-            $('#nextSteps').append('<h3>Complete!</h3>');
+            $('#nextSteps').append('<h3>Successfully imported!</h3>');
             return;
           }
           var nonImportTotal = 0;
@@ -115,6 +116,7 @@
       
       function onReturn(MyData) {
         displayErrors(MyData);
+        $('#toImport').attr({rows: '5'});
         $('.overlay').hide();
         $('#mySpinner').removeClass('spinner');
       }
@@ -123,6 +125,12 @@
         var category = $('#row-' + param).data('category');
         var amount = $('#row-' + param).data('amount')
         $('#nextSteps').append(param + ': clicked ' + category + ' : ' + amount + '</p>');
+        $('.overlay').show();
+        $('#mySpinner').addClass('spinner');
+        google.script.run.InsertNewExpense(category, amount);
+        $('#row-' + param).remove();
+        $('.overlay').hide();
+        $('#mySpinner').removeClass('spinner');
       }
     </script>
   </body>
