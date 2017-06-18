@@ -3,6 +3,39 @@
   <head>
     <base target="_top">
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>
+      @keyframes spinner {
+        to {transform: rotate(360deg);}
+      }
+       
+      .spinner:before {
+        content: '';
+        box-sizing: border-box;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 50px;
+        height: 50px;
+        margin-top: -10px;
+        margin-left: -10px;
+        border-radius: 50%;
+        border-top: 4px solid #07d;
+        border-right: 4px solid transparent;
+        animation: spinner .9s linear infinite;
+        z-index: 20;
+      }
+      
+      .overlay {
+          background: #e9e9e9;
+          display: none;
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          opacity: 0.5;
+      }
+    </style>
   </head>
   <body>
     <h1>Paste data here:</h1>
@@ -11,6 +44,8 @@
     <button class="" id="ClearBtn">Clear</button>
     <button class="" id="testBtn">Test</button>
     <div id="nextSteps"></div>
+    <div id="mySpinner" class=""></div>
+    <div class="overlay"></div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
       $(function() {
@@ -47,9 +82,11 @@
             let $newBtn = $('<button />')
               .attr({id: btnID, style: 'margin: 5px;margin-bottom: 2px'})
               .text('Add')
-              .click(function () {testClick(thisRowNumber)});
+              .click(function () {addRow(thisRowNumber)});
             let $newDiv = $('<div />')
-              .attr({id: 'row-' + i});
+              .attr({id: 'row-' + i})
+              .data('category', item[0])
+              .data('amount', item[1]);
             $newDiv.append($newBtn, $newLbl);
             $('#nextSteps').append($newDiv);
             i++;
@@ -60,6 +97,8 @@
       function runImportData() {
         var MyData;
         
+        $('.overlay').show();
+        $('#mySpinner').addClass('spinner');
         $('#nextSteps').html('');
         MyData = $('#toImport').val();
         if (MyData.indexOf('\t') > 0) {
@@ -76,10 +115,14 @@
       
       function onReturn(MyData) {
         displayErrors(MyData);
+        $('.overlay').hide();
+        $('#mySpinner').removeClass('spinner');
       }
       
-      function testClick(param) {
-        $('#nextSteps').append('<p>clicked ' + param + '</p>');
+      function addRow(param) {
+        var category = $('#row-' + param).data('category');
+        var amount = $('#row-' + param).data('amount')
+        $('#nextSteps').append(param + ': clicked ' + category + ' : ' + amount + '</p>');
       }
     </script>
   </body>
