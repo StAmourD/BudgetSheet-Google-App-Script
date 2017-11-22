@@ -40,5 +40,10 @@ function importData(ThisData) {
       RetData.push(item);
     }
   });
+  
+  //update last updated date:
+  var curDat = new Date();
+  sheet.getRange(1, 4).setValue(curDat);
+  
   return RetData;
 }
