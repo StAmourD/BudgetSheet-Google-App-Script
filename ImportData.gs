@@ -44,6 +44,10 @@ function importData(ThisData) {
   //update last updated date:
   var curDat = new Date();
   sheet.getRange(1, 4).setValue(curDat);
-  
+  if(RetData.length > 0) {
+    sheet.getRange(1, 8).setValue('Missing ' + RetData.length + ' categories.');
+  } else {
+    sheet.getRange(1, 8).setValue('');
+  }
   return RetData;
 }
